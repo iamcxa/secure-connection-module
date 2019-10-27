@@ -2,7 +2,7 @@
   "name": "secure-connection-module",
   "version": "1.0.0",
   "description": "a connection module to integrate A and B safely.",
-  "main": "src/connection.js",
+  "main": "dist/connection.dist.js",
   "scripts": {
     "lint-check": "eslint .",
     "lint-fix": "eslint --fix .",

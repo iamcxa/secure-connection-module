@@ -48,3 +48,4 @@ $ yarn start
 - [ ] add code testing coverage report
 - [ ] add auto reporting after every test runs
 - [ ] add github stickers for coverage and contributors
+- [ ] add build tools that could transform es6 to commonjs(to dist)
