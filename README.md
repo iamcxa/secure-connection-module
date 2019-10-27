@@ -42,3 +42,9 @@ $ yarn start
 <!-- what is related your project -->
 
 - [A Reference](https://nodejs.org/)
+
+## TODO
+
+- [ ] add code testing coverage report
+- [ ] add auto reporting after every test runs
+- [ ] add github stickers for coverage and contributors
