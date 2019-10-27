@@ -8,10 +8,13 @@
     "lint-fix": "eslint --fix .",
     "prettier-fix": "prettier --write **/*.js",
     "prettier-check": "prettier --list-different **/*.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "jest /__test__"
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "conventional-changelog": "^3.1.12",
+    "conventional-changelog-cli": "^2.0.25",
     "cryptico-js": "^1.1.0"
   },
   "devDependencies": {
