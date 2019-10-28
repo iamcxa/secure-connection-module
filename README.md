@@ -16,7 +16,10 @@
 <!-- TODO -->
 ```bash
 # Installation
-$ npm
+$ npm install
+
+# testing
+$ npm run test
 
 ```
 ## Usage
