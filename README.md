@@ -1,41 +1,61 @@
-# template-for-poc
+# secure-connection-module
 
 <!-- descriptions, main goal to deal with -->
-
-A example client template, a POC of integrate A and B.
+前後端加解密用模組。
 
 ## Releated Repo
 
 <!-- where is your server repo -->
 
-- [Another repo](https://github.com/)
+實作前後端模擬真實環境用POC -
+[secure-env-poc ](https://github.com/iamcxa/secure-env-poc)
 
+## Getting Started
+
+### Installation
+<!-- TODO -->
+```bash
+# Installation
+$ npm
+
+```
 ## Usage
 
 <!-- how to install or build your project -->
 
-```bash
-# Installation
-$ yarn install
+```JavaScript
+// Init with RSA-1024 public key API
+const connection = await Connection.getInstance(url);
 
-# Deploy to device
-$ yarn run ios
-# or
-$ yarn run android
+// Base get/delete
+const userData = await connection.get(url);
 
-# Start
-$ yarn start
+// post/put with partial encryption
+let postBody = { Account: 'test' ,Password: 'test' };
+let postOption = { encrypt: ['Password'] }; //option style same as axios
+const response = await connection.post(url, postBody, postOption);
+
+//ppost/put with fully encryption
+let postBody = { Account: 'test' ,Password: 'test' };
+let postOption = { encrypt: 'all' };  //option style same as axios
+const response = await connection.post(url, postBody, postOption);
 ```
 
-## Limits
+<!-- ## Limits-->
 
 <!-- limitation of this POC -->
+## References
 
-## Notes
+[axios](https://github.com/axios/axios) - 0.18.0  
+[cryptico-js](https://github.com/wwwtyro/cryptico) - 1.1.0
+
+### License
+
+<!-- ## Notes ==>
 
 <!-- anything should be note-->
 
-- Shoule notice the...
+<!-- - Shoule notice the... -->
 
 ## References
 
