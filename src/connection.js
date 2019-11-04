@@ -1,10 +1,10 @@
 import axios from 'axios';
 import cryptico, { RSAKey } from 'cryptico-js';
+import https from 'https';
 
-async function AxiosGet(url, query, OnSuccess, OnFaild) {
-  var headers = {};
+async function AxiosGet(url, config, OnSuccess, OnFaild) {
   await axios
-    .get(url, { headers: headers, params: query })
+    .get(url, config)
     .then(async (res) => {
       if (OnSuccess && typeof OnSuccess === 'function') {
         await OnSuccess(res.data);
@@ -17,10 +17,9 @@ async function AxiosGet(url, query, OnSuccess, OnFaild) {
     });
 }
 
-async function AxiosDelete(url, query, OnSuccess, OnFaild) {
-  var headers = {};
+async function AxiosDelete(url, config, OnSuccess, OnFaild) {
   await axios
-    .delete(url, { headers: headers, params: query })
+    .delete(url, config)
     .then(async (res) => {
       if (OnSuccess && typeof OnSuccess === 'function') {
         await OnSuccess(res.data);
@@ -33,10 +32,9 @@ async function AxiosDelete(url, query, OnSuccess, OnFaild) {
     });
 }
 
-async function AxiosPost(url, data, query, OnSuccess, OnFaild) {
-  var headers = {};
+async function AxiosPost(url, data, config, OnSuccess, OnFaild) {
   await axios
-    .post(url, data, { headers: headers, params: query })
+    .post(url, data, config)
     .then(async (res) => {
       if (OnSuccess && typeof OnSuccess === 'function') {
         await OnSuccess(res.data);
@@ -49,10 +47,9 @@ async function AxiosPost(url, data, query, OnSuccess, OnFaild) {
     });
 }
 
-async function AxiosPut(url, data, query, OnSuccess, OnFaild) {
-  var headers = {};
+async function AxiosPut(url, data, config, OnSuccess, OnFaild) {
   await axios
-    .put(url, data, { headers: headers, params: query })
+    .put(url, data, config)
     .then(async (res) => {
       if (OnSuccess && typeof OnSuccess === 'function') {
         await OnSuccess(res.data);
@@ -80,16 +77,26 @@ function RSAEncrypt(publicKey, plaintext) {
 }
 
 class ConnectionModule {
-  static async getInstance(url) {
-    var module = null;
-    await AxiosGet(url, null, res => {
-      module = new ConnectionModule(res.data);
+  static async getInstance(url, ignoreSSL = false) {
+    let module = null;
+    let agent = new https.Agent({
+      rejectUnauthorized: !ignoreSSL
+    });
+    await AxiosGet(url, { httpsAgent: agent }, (res) => {
+      module = new ConnectionModule(res.data, ignoreSSL);
     });
     return module;
   }
 
-  constructor(publicKey) {
+  constructor(publicKey, ignoreSSL = false) {
+    this.rejectUnauthorized = !ignoreSSL;
     this.publicKey = publicKey;
+  }
+
+  agent() {
+    return new https.Agent({
+      rejectUnauthorized: this.rejectUnauthorized
+    });
   }
 
   getPublicKey() {
@@ -124,45 +131,50 @@ class ConnectionModule {
     return postBody;
   }
 
-
-  async get(url, postQuery) {
-    var response = null;
-    await AxiosGet(url, postQuery, res => {
-      this.response = res;
-    });
-    return response;
-  }
-
-  async post(url, postBody, postOption) {
-    var response = null;
-    var option = { ...postOption };
-    var body = this.encryptPostData(postBody, postOption);
-    if (option.encrypt) {
-      delete option.encrypt;
-    }
-    await AxiosPost(url, body, option, res => {
+  async get(url, config) {
+    let response = null;
+    let postConfig = { ...config };
+    postConfig.httpsAgent = this.agent();
+    await AxiosGet(url, postConfig, async res => {
       response = res;
     });
     return response;
   }
 
-  async put(url, postBody, postOption) {
-    var response = null;
-    var option = { ...postOption };
-    var body = this.encryptPostData(postBody, postOption);
-    if (option.encrypt) {
-      delete option.encrypt;
+  async post(url, body, config) {
+    let response = null;
+    let postConfig = { ...config };
+    let postBody = this.encryptPostData(body, postConfig);
+    if (postConfig.encrypt) {
+      delete postConfig.encrypt;
     }
-    await AxiosPut(url, body, postOption, res => {
+    postConfig.httpsAgent = this.agent();
+    await AxiosPost(url, postBody, postConfig, res => {
       response = res;
     });
     return response;
   }
 
-  async delete(url, postQuery) {
-    var response = null;
-    await AxiosDelete(url, postQuery, res => {
-      this.response = res;
+  async put(url, body, option) {
+    let response = null;
+    let postConfig = { ...option };
+    let postBody = this.encryptPostData(body, postConfig);
+    if (postConfig.encrypt) {
+      delete postConfig.encrypt;
+    }
+    postConfig.httpsAgent = this.agent();
+    await AxiosPut(url, postBody, postConfig, res => {
+      response = res;
+    });
+    return response;
+  }
+
+  async delete(url, config) {
+    let response = null;
+    let postConfig = { ...config };
+    postConfig.httpsAgent = this.agent();
+    await AxiosDelete(url, postConfig, res => {
+      response = res;
     });
     return response;
   }
