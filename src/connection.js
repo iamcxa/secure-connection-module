@@ -2,7 +2,7 @@ import axios from 'axios';
 import cryptico, { RSAKey } from 'cryptico-js';
 import https from 'https';
 
-async function AxiosGet(url, config, OnSuccess, OnFaild) {
+async function AxiosGet(url, config, OnSuccess, OnFailed) {
   await axios
     .get(url, config)
     .then(async (res) => {
@@ -11,13 +11,13 @@ async function AxiosGet(url, config, OnSuccess, OnFaild) {
       }
     })
     .catch(async (err) => {
-      if (OnFaild && typeof OnFaild === 'function') {
-        await OnFaild(err);
+      if (OnFailed && typeof OnFailed === 'function') {
+        await OnFailed(err);
       }
     });
 }
 
-async function AxiosDelete(url, config, OnSuccess, OnFaild) {
+async function AxiosDelete(url, config, OnSuccess, OnFailed) {
   await axios
     .delete(url, config)
     .then(async (res) => {
@@ -26,13 +26,13 @@ async function AxiosDelete(url, config, OnSuccess, OnFaild) {
       }
     })
     .catch(async (err) => {
-      if (OnFaild && typeof OnFaild === 'function') {
-        await OnFaild(err);
+      if (OnFailed && typeof OnFailed === 'function') {
+        await OnFailed(err);
       }
     });
 }
 
-async function AxiosPost(url, data, config, OnSuccess, OnFaild) {
+async function AxiosPost(url, data, config, OnSuccess, OnFailed) {
   await axios
     .post(url, data, config)
     .then(async (res) => {
@@ -41,13 +41,13 @@ async function AxiosPost(url, data, config, OnSuccess, OnFaild) {
       }
     })
     .catch(async (err) => {
-      if (OnFaild && typeof OnFaild === 'function') {
-        await OnFaild(err);
+      if (OnFailed && typeof OnFailed === 'function') {
+        await OnFailed(err);
       }
     });
 }
 
-async function AxiosPut(url, data, config, OnSuccess, OnFaild) {
+async function AxiosPut(url, data, config, OnSuccess, OnFailed) {
   await axios
     .put(url, data, config)
     .then(async (res) => {
@@ -56,8 +56,8 @@ async function AxiosPut(url, data, config, OnSuccess, OnFaild) {
       }
     })
     .catch(async (err) => {
-      if (OnFaild && typeof OnFaild === 'function') {
-        await OnFaild(err);
+      if (OnFailed && typeof OnFailed === 'function') {
+        await OnFailed(err);
       }
     });
 }
@@ -80,7 +80,7 @@ class ConnectionModule {
   static async getInstance(url, ignoreSSL = false) {
     let module = null;
     let agent = new https.Agent({
-      rejectUnauthorized: !ignoreSSL
+      rejectUnauthorized: !ignoreSSL,
     });
     await AxiosGet(url, { httpsAgent: agent }, (res) => {
       module = new ConnectionModule(res.data, ignoreSSL);
@@ -95,7 +95,7 @@ class ConnectionModule {
 
   agent() {
     return new https.Agent({
-      rejectUnauthorized: this.rejectUnauthorized
+      rejectUnauthorized: this.rejectUnauthorized,
     });
   }
 
@@ -108,24 +108,32 @@ class ConnectionModule {
   }
 
   encryptPostData(postBody, postOption) {
-    if (postOption.encrypt && typeof postOption.encrypt === 'string' && postOption.encrypt === 'all') {
+    if (
+      postOption.encrypt &&
+      typeof postOption.encrypt === 'string' &&
+      postOption.encrypt === 'all'
+    ) {
       return { data: RSAEncrypt(this.publicKey, JSON.stringify(postBody)) };
     }
-    if (postOption.encrypt && typeof postOption.encrypt === 'object' && Array.isArray(postOption.encrypt)) {
+    if (
+      postOption.encrypt &&
+      typeof postOption.encrypt === 'object' &&
+      Array.isArray(postOption.encrypt)
+    ) {
       let Scope = [];
       let data = postBody;
       for (let i = 0; i < postOption.encrypt.length; i += 1) {
         if (data[postOption.encrypt[i]]) {
           data[postOption.encrypt[i]] = RSAEncrypt(
             this.publicKey,
-            data[postOption.encrypt[i]]
+            data[postOption.encrypt[i]],
           );
           Scope.push(postOption.encrypt[i]);
         }
       }
       return {
         data: data,
-        Scope: Scope
+        Scope: Scope,
       };
     }
     return postBody;
@@ -135,7 +143,7 @@ class ConnectionModule {
     let response = null;
     let postConfig = { ...config };
     postConfig.httpsAgent = this.agent();
-    await AxiosGet(url, postConfig, async res => {
+    await AxiosGet(url, postConfig, async (res) => {
       response = res;
     });
     return response;
@@ -149,7 +157,7 @@ class ConnectionModule {
       delete postConfig.encrypt;
     }
     postConfig.httpsAgent = this.agent();
-    await AxiosPost(url, postBody, postConfig, res => {
+    await AxiosPost(url, postBody, postConfig, (res) => {
       response = res;
     });
     return response;
@@ -163,7 +171,7 @@ class ConnectionModule {
       delete postConfig.encrypt;
     }
     postConfig.httpsAgent = this.agent();
-    await AxiosPut(url, postBody, postConfig, res => {
+    await AxiosPut(url, postBody, postConfig, (res) => {
       response = res;
     });
     return response;
@@ -173,7 +181,7 @@ class ConnectionModule {
     let response = null;
     let postConfig = { ...config };
     postConfig.httpsAgent = this.agent();
-    await AxiosDelete(url, postConfig, res => {
+    await AxiosDelete(url, postConfig, (res) => {
       response = res;
     });
     return response;
