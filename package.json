@@ -1,6 +1,6 @@
 {
   "name": "secure-connection-module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a connection module to integrate A and B safely.",
   "main": "dist/connection.dist.js",
   "scripts": {
