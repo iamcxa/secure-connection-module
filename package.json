@@ -1,6 +1,6 @@
 {
   "name": "secure-connection-module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "a connection module to integrate A and B safely.",
   "main": "dist/connection.dist.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "prettier-fix": "prettier --write **/*.js",
     "prettier-check": "prettier --list-different **/*.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "changelog-full": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "jest /__test__",
     "dist": "node ./minify.js src/connection.js  dist/connection.dist.js"
   },
