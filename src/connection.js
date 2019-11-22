@@ -187,4 +187,5 @@ class ConnectionModule {
     return response;
   }
 }
+
 export default ConnectionModule;
