@@ -3,11 +3,11 @@
 <!-- descriptions, main goal to deal with -->
 前後端加解密用模組。
 
-## Releated Repo
+## Related Repo
 
 <!-- where is your server repo -->
 
-實作前後端模擬真實環境用POC -
+- 實作前後端模擬真實環境用POC：
 [secure-env-poc ](https://github.com/iamcxa/secure-env-poc)
 
 ## Getting Started
@@ -22,7 +22,7 @@ $ npm install
 $ npm run test
 
 ```
-## Usage
+### Usage
 
 <!-- how to install or build your project -->
 
@@ -44,25 +44,27 @@ let postOption = { encrypt: 'all' };  //option style same as axios
 const response = await connection.post(url, postBody, postOption);
 ```
 
-<!-- ## Limits-->
+### Building
 
+- using babel with babel-preset-minify
+
+```sh
+npm run dist
+```
+
+<!-- ## Limits-->
 <!-- limitation of this POC -->
+
 ## References
+<!-- what is related your project -->
 
 [axios](https://github.com/axios/axios) - 0.18.0  
 [cryptico-js](https://github.com/wwwtyro/cryptico) - 1.1.0
 
-### License
+## License
 
 <!-- ## Notes ==>
-
 <!-- anything should be note-->
-
-<!-- - Shoule notice the... -->
-
-## References
-
-<!-- what is related your project -->
 
 - [A Reference](https://nodejs.org/)
 
@@ -71,4 +73,4 @@ const response = await connection.post(url, postBody, postOption);
 - [ ] add code testing coverage report
 - [ ] add auto reporting after every test runs
 - [ ] add github stickers for coverage and contributors
-- [ ] add build tools that could transform es6 to commonjs(to dist)
+- [X] add build tools that could transform es6 to commonjs(to dist)
